@@ -17,12 +17,11 @@
         android:theme="@style/Theme.MyApplication">
         <activity
             android:name=".MainActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden"
             android:exported="true"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.MyApplication"
-            tools:ignore="DiscouragedApi,LockedOrientationActivity">
+            android:screenOrientation="fullUser"
+            android:theme="@style/Theme.MyApplication">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

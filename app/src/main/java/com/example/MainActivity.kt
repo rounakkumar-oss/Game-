@@ -178,6 +178,43 @@ class AndroidCosmicBridge(
         } catch (_: Exception) {
         }
     }
+
+    @JavascriptInterface
+    fun saveGlbBase64(fileName: String, base64Data: String): String {
+        return try {
+            val cleanName = fileName.replace(Regex("[^a-zA-Z0-9._-]"), "_")
+                .let { if (it.endsWith(".glb")) it else "$it.glb" }
+            val bytes = android.util.Base64.decode(base64Data, android.util.Base64.DEFAULT)
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                val resolver = context.contentResolver
+                val values = android.content.ContentValues().apply {
+                    put(android.provider.MediaStore.Downloads.DISPLAY_NAME, cleanName)
+                    put(android.provider.MediaStore.Downloads.MIME_TYPE, "model/gltf-binary")
+                    put(
+                        android.provider.MediaStore.Downloads.RELATIVE_PATH,
+                        android.os.Environment.DIRECTORY_DOWNLOADS + "/CosmicArcade3D"
+                    )
+                }
+                val uri = resolver.insert(android.provider.MediaStore.Downloads.EXTERNAL_CONTENT_URI, values)
+                if (uri != null) {
+                    resolver.openOutputStream(uri)?.use { out ->
+                        out.write(bytes)
+                        out.flush()
+                    }
+                    return "Downloads/CosmicArcade3D/$cleanName"
+                }
+            }
+
+            val dir = java.io.File(context.getExternalFilesDir(null) ?: context.filesDir, "exports")
+            if (!dir.exists()) dir.mkdirs()
+            val outFile = java.io.File(dir, cleanName)
+            outFile.writeBytes(bytes)
+            outFile.absolutePath
+        } catch (e: Exception) {
+            ""
+        }
+    }
 }
 
 @SuppressLint("SetJavaScriptEnabled")

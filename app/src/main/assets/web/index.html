@@ -11,7 +11,7 @@
   <div id="cosmic-bg" class="cosmic-bg"></div>
   <div id="ai-bg-overlay" class="ai-bg-overlay"></div>
 
-  <!-- 3D WebGL Viewport -->
+  <!-- 3D WebGL Viewport (Cosmic Pop 3D) -->
   <canvas id="game-canvas"></canvas>
 
   <!-- Minimalist Cosmic HUD -->
@@ -74,10 +74,348 @@
           <div id="preview-next" class="sphere-preview next-sphere"></div>
         </div>
       </button>
+
+      <!-- Bottom-right Arcade Game Hub Switcher Pill -->
+      <button class="games-hub-pill js-open-game-hub" aria-label="Open Sliding Game Hub">
+        <span class="games-hub-icon">🎮</span>
+        <span>ARCADE HUB</span>
+      </button>
     </div>
   </div>
 
-  <!-- LEVEL COMPLETE / TIME'S UP MODAL -->
+  <!-- ===================================================================== -->
+  <!-- 1. MAIN GAME HUB – SLIDING CAROUSEL INTERFACE                         -->
+  <!-- ===================================================================== -->
+  <div id="game-hub-overlay" class="modal-overlay hidden">
+    <div class="hub-modal">
+      <div class="hub-top-row">
+        <div>
+          <span class="hub-eyebrow">MULTI-GAME 3D ARCADE COLLECTION</span>
+          <h2 class="hub-title">SWIPE TO SELECT GAME</h2>
+        </div>
+        <div class="hub-top-actions">
+          <span id="hub-slide-counter" class="hub-slide-counter">1 / 4</span>
+          <button id="btn-close-hub" class="glass-circle-btn sm-btn" aria-label="Close Game Switcher">✕</button>
+        </div>
+      </div>
+
+      <!-- Horizontal Touch-Swipe Viewport -->
+      <div id="hub-carousel-viewport" class="hub-carousel-viewport">
+        <div id="hub-carousel-track" class="hub-carousel-track"></div>
+      </div>
+
+      <!-- Carousel Navigation Controls & Pagination Dots -->
+      <div class="hub-nav-row">
+        <button id="hub-prev-btn" class="hub-arrow-btn" aria-label="Previous Game">◀</button>
+        <div id="hub-carousel-dots" class="hub-dots-wrap"></div>
+        <button id="hub-next-btn" class="hub-arrow-btn" aria-label="Next Game">▶</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- 2. GAME ONE – CAPY PAIRS (COZY JAPANESE PASTEL STORYBOOK EDITION)     -->
+  <!-- ===================================================================== -->
+  <div id="capy-pairs-view" class="capy-view hidden">
+    <!-- Top Header -->
+    <div class="capy-top-bar">
+      <button id="btn-capy-hub" class="capy-icon-btn" aria-label="Open Game Hub">
+        <span>🎮 Hub</span>
+      </button>
+
+      <div class="capy-header-center">
+        <div id="capy-stage-pill" class="capy-stage-pill">Level 1 • Cozy 4×4 (8 Pairs)</div>
+        <div class="capy-level-tabs">
+          <button id="btn-capy-lvl-1" class="capy-lvl-tab active">Lv.1 (4×4 • 8 Pairs)</button>
+          <button id="btn-capy-lvl-2" class="capy-lvl-tab">Lv.2 (28 Cards • 14 Pairs)</button>
+        </div>
+        <div class="capy-progress-row">
+          <div class="capy-progress-track">
+            <div id="capy-progress-fill" class="capy-progress-fill"></div>
+          </div>
+          <span id="capy-progress-pct" class="capy-progress-pct">0/8 PAIRS</span>
+        </div>
+        <div class="capy-meta-row">
+          <span id="capy-time-pill" class="capy-time-pill">TIME 1:15</span>
+          <span id="capy-moves-pill" class="capy-time-pill">MOVES 0</span>
+          <span id="capy-score-pill" class="capy-time-pill">SCORE 0</span>
+          <span id="capy-stars-pill" class="capy-coin-pill">★★★</span>
+        </div>
+      </div>
+
+      <button id="btn-capy-pause" class="capy-combo-badge" aria-label="Pause Capy Pairs">
+        <span id="capy-combo-val" class="capy-combo-num">1x</span>
+        <span class="capy-combo-lbl">PAUSE ⏸</span>
+      </button>
+    </div>
+
+    <!-- Floating Combo Toast -->
+    <div id="capy-combo-toast" class="capy-combo-toast">STORYBOOK MATCH! +120</div>
+
+    <!-- Interactive 3D Card-Flip Board -->
+    <div class="capy-board-wrap">
+      <div id="capy-grid" class="capy-grid"></div>
+    </div>
+
+    <!-- Bottom Power-ups, Leaderboard & Restart Bar -->
+    <div class="capy-bottom-bar">
+      <button id="btn-capy-hint" class="capy-power-btn" aria-label="Yuzu Peek Hint">
+        <span class="p-ico">🍊</span>
+        <span class="p-txt">Peek</span>
+      </button>
+      <button id="btn-capy-shuffle" class="capy-power-btn" aria-label="Shuffle Unmatched Tiles">
+        <span class="p-ico">🔀</span>
+        <span class="p-txt">Shuffle</span>
+      </button>
+      <button id="btn-capy-freeze" class="capy-power-btn" aria-label="Add 15 Seconds">
+        <span class="p-ico">⏱️</span>
+        <span class="p-txt">+15s</span>
+      </button>
+      <button id="btn-capy-leaderboard" class="capy-power-btn" aria-label="High Score Leaderboard">
+        <span class="p-ico">🏆</span>
+        <span class="p-txt">Scores</span>
+      </button>
+      <button id="btn-capy-restart" class="capy-power-btn accent" aria-label="Restart Level">
+        <span class="p-ico">↻</span>
+        <span class="p-txt">Restart</span>
+      </button>
+    </div>
+
+    <!-- Capy Pairs Pause Modal -->
+    <div id="capy-pause-modal" class="modal-overlay hidden">
+      <div class="glass-modal">
+        <div class="modal-badge">GAME PAUSED</div>
+        <h2 class="modal-title">CAPY PAIRS</h2>
+        <p class="modal-subtitle">Cozy Japanese Pastel Storybook Memory Game</p>
+        <div class="modal-actions">
+          <button id="btn-capy-resume" class="btn-primary-glow full-w">▶ RESUME GAME</button>
+          <button id="btn-capy-pause-restart" class="btn-glass-secondary full-w">↻ RESTART LEVEL</button>
+          <button class="btn-glass-secondary full-w js-open-game-hub">🎮 SWITCH GAME</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Capy Pairs Local High-Score Leaderboard Modal -->
+    <div id="capy-leaderboard-modal" class="modal-overlay hidden">
+      <div class="glass-modal wide-modal">
+        <div class="modal-header-row">
+          <h2 class="modal-title-sm">🏆 CAPY PAIRS LEADERBOARD</h2>
+          <button id="btn-close-capy-lb" class="glass-circle-btn sm-btn">✕</button>
+        </div>
+        <p class="modal-subtitle-sm">Top local high scores saved offline on your device</p>
+        <div id="capy-leaderboard-list" class="capy-lb-list"></div>
+      </div>
+    </div>
+
+    <!-- Capy Pairs Victory / Retry Modal -->
+    <div id="capy-result-modal" class="modal-overlay hidden">
+      <div class="glass-modal">
+        <div id="capy-res-badge" class="modal-badge">ONSEN CLEARED ★★★</div>
+        <h2 id="capy-res-title" class="modal-title">CAPY VICTORY!</h2>
+        <p id="capy-res-sub" class="modal-subtitle">All Capybara pairs reunited in pastel harmony!</p>
+
+        <div class="modal-stats">
+          <div class="stat-box">
+            <span class="stat-val" id="capy-res-moves">12</span>
+            <span class="stat-lbl">MOVES</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-val" id="capy-res-combo">1450</span>
+            <span class="stat-lbl">SCORE</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-val" id="capy-res-coins">★★★</span>
+            <span class="stat-lbl">RATING</span>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button id="btn-capy-next" class="btn-primary-glow full-w">NEXT LEVEL ▶</button>
+          <button id="btn-capy-modal-hub" class="btn-glass-secondary full-w">🎮 SWITCH GAME</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- 3. GAME TWO – CANNON KNOCKDOWN 3D (3 WORLDS • 9 LEVELS)               -->
+  <!-- ===================================================================== -->
+  <div id="cannon-knockdown-view" class="cannon-view hidden">
+    <canvas id="cannon-canvas" class="cannon-canvas"></canvas>
+
+    <!-- Cannon Knockdown 3D HUD -->
+    <div class="cannon-hud">
+      <div class="cannon-top-bar">
+        <button id="btn-cannon-hub" class="glass-circle-btn" aria-label="Open Game Hub">🎮</button>
+
+        <div class="cannon-header-center">
+          <div id="cannon-world-pill" class="cannon-world-pill">WORLD 1 • WILD WEST DESERT CARNIVAL</div>
+          <div id="cannon-level-pill" class="cannon-level-pill">LEVEL 1/9 • Sunset Can Pyramid</div>
+          <div class="progress-row">
+            <div class="progress-track">
+              <div id="cannon-progress-fill" class="progress-fill"></div>
+            </div>
+            <span id="cannon-progress-txt" class="progress-pct">0/10</span>
+          </div>
+          <div class="cannon-meta-row">
+            <span id="cannon-ammo-val" class="cannon-stat-pill">💣 5</span>
+            <span id="cannon-coins-val" class="cannon-stat-pill">🪙 120</span>
+            <span id="cannon-score-val" class="cannon-stat-pill">0 PTS</span>
+          </div>
+        </div>
+
+        <button id="btn-cannon-pause" class="glass-circle-btn" aria-label="Pause Cannon Knockdown">⏸</button>
+      </div>
+
+      <!-- Combo Popup (DOUBLE, TRIPLE, ULTRA, MEGA, PERFECT) -->
+      <div id="cannon-combo-popup" class="cannon-combo-popup">MEGA KNOCKDOWN!</div>
+
+      <div class="cannon-aim-hint">Drag anywhere to AIM 3D Trajectory • Tap Red FIRE Button</div>
+
+      <!-- Bottom Controls: Level Select, Explosive Cannonball, LARGE RED FIRE BUTTON, Restart -->
+      <div class="cannon-bottom-bar">
+        <div class="cannon-side-group">
+          <button id="btn-cannon-levels" class="cannon-tool-btn">
+            <span class="p-ico">🗺️</span>
+            <span class="p-txt">9 Levels</span>
+          </button>
+          <button id="btn-cannon-explosive" class="cannon-tool-btn">
+            <span class="p-ico">💥</span>
+            <span class="p-txt">Bomb (1)</span>
+          </button>
+        </div>
+
+        <button id="btn-cannon-fire" class="btn-cannon-fire" aria-label="Fire Cannonball">
+          <span class="fire-main">FIRE!</span>
+          <span class="fire-sub">CANNON</span>
+        </button>
+
+        <div class="cannon-side-group">
+          <button id="btn-cannon-restart" class="cannon-tool-btn">
+            <span class="p-ico">↻</span>
+            <span class="p-txt">Restart</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cannon Knockdown 3D Level Selection Modal (9 Levels across 3 Worlds) -->
+    <div id="cannon-levels-modal" class="modal-overlay hidden">
+      <div class="glass-modal wide-modal">
+        <div class="modal-header-row">
+          <h2 class="modal-title-sm">SELECT WORLD &amp; LEVEL (1–9)</h2>
+          <button id="btn-close-cannon-levels" class="glass-circle-btn sm-btn">✕</button>
+        </div>
+        <p class="modal-subtitle-sm">World 1: Wild West • World 2: Cyberpunk • World 3: Ice Kingdom</p>
+        <div id="cannon-levels-grid" class="level-grid"></div>
+      </div>
+    </div>
+
+    <!-- Cannon Knockdown 3D Pause Modal -->
+    <div id="cannon-pause-modal" class="modal-overlay hidden">
+      <div class="glass-modal">
+        <div class="modal-badge">PAUSED</div>
+        <h2 class="modal-title">CANNON KNOCKDOWN 3D</h2>
+        <p class="modal-subtitle">3 Worlds • 9 Physics Levels • Offline Ready</p>
+        <div class="modal-actions">
+          <button id="btn-cannon-resume" class="btn-primary-glow full-w">▶ RESUME</button>
+          <button id="btn-cannon-pause-restart" class="btn-glass-secondary full-w">↻ RESTART LEVEL</button>
+          <button class="btn-glass-secondary full-w js-open-game-hub">🎮 SWITCH GAME</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cannon Knockdown 3D Victory / Retry Modal -->
+    <div id="cannon-result-modal" class="modal-overlay hidden">
+      <div class="glass-modal">
+        <div id="cannon-res-badge" class="modal-badge">STAGE CLEARED • ★★★</div>
+        <h2 id="cannon-res-title" class="modal-title">BOOM! KNOCKDOWN!</h2>
+        <p id="cannon-res-sub" class="modal-subtitle">All targets demolished!</p>
+
+        <div class="modal-stats">
+          <div class="stat-box">
+            <span class="stat-val" id="cannon-res-score">1200</span>
+            <span class="stat-lbl">SCORE</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-val" id="cannon-res-stars">★★★</span>
+            <span class="stat-lbl">STARS</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-val" id="cannon-res-coins">🪙 150</span>
+            <span class="stat-lbl">COINS</span>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button id="btn-cannon-next" class="btn-primary-glow full-w">NEXT LEVEL ▶</button>
+          <button id="btn-cannon-res-hub" class="btn-glass-secondary full-w">🎮 SWITCH GAME</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- 4. 3D GAME ASSET STUDIO & BINARY GLB EXPORTER                         -->
+  <!-- ===================================================================== -->
+  <div id="asset-studio-view" class="studio-view hidden">
+    <canvas id="studio-canvas" class="studio-canvas"></canvas>
+
+    <!-- Studio HUD Overlay -->
+    <div class="studio-hud">
+      <!-- Top Bar -->
+      <div class="studio-top-bar">
+        <button id="btn-studio-hub" class="glass-circle-btn" aria-label="Open Game Hub">🎮</button>
+        <div class="studio-title-wrap">
+          <span class="studio-eyebrow">INTERACTIVE 360° 3D ASSET STUDIO</span>
+          <h2 id="studio-model-title" class="studio-model-title">1. Pirate Carnival Cannon</h2>
+          <p id="studio-model-desc" class="studio-model-desc">Naval oak carriage with spoked wheels and elevating cast-iron barrel.</p>
+        </div>
+        <div id="studio-tex-preview" class="studio-tex-preview" title="Procedural Texture Preview"></div>
+      </div>
+
+      <!-- Horizontal 7-Model Selector Strip -->
+      <div id="studio-model-chips" class="studio-chips-row"></div>
+
+      <!-- Toast Notification for GLB Export -->
+      <div id="studio-toast" class="studio-toast">✓ Exported .GLB Model!</div>
+
+      <!-- Bottom Inspector & GLB Exporter Panel -->
+      <div class="studio-bottom-panel">
+        <!-- Skin Switcher for Carnival Tin Can (Skin 1 vs Skin 2) -->
+        <div id="studio-skin-row" class="studio-control-row hidden">
+          <span class="studio-lbl">Tin Can Skin:</span>
+          <button id="btn-studio-skin1" class="studio-mini-btn active">Skin 1: Carnival Star</button>
+          <button id="btn-studio-skin2" class="studio-mini-btn">Skin 2: Cyber Neon</button>
+        </div>
+
+        <!-- Cannon Elevation Slider & Test Fire Button -->
+        <div id="studio-cannon-controls" class="studio-control-row">
+          <span class="studio-lbl">Elevation: <b id="studio-elevation-val">14°</b></span>
+          <input id="studio-elevation-slider" type="range" min="-10" max="45" value="14" class="studio-slider" />
+          <button id="btn-studio-test-fire" class="studio-fire-btn">🔥 TEST FIRE</button>
+        </div>
+
+        <!-- Viewport Toggles: Cartoon Outline, Wireframe, Auto-Rotate, Zoom & Reset -->
+        <div class="studio-toggles-row">
+          <button id="btn-studio-outline" class="studio-toggle-btn active">Outline: ON</button>
+          <button id="btn-studio-wireframe" class="studio-toggle-btn">Wireframe: OFF</button>
+          <button id="btn-studio-autorotate" class="studio-toggle-btn active">Auto-Rotate: ON</button>
+          <button id="btn-studio-zoom-in" class="studio-cam-btn" title="Zoom In">＋</button>
+          <button id="btn-studio-zoom-out" class="studio-cam-btn" title="Zoom Out">－</button>
+          <button id="btn-studio-reset-cam" class="studio-cam-btn" title="Reset Camera">⟲</button>
+        </div>
+
+        <!-- Binary GLB Export Buttons (Single + Download All 7 Separate GLBs) -->
+        <div class="studio-export-row">
+          <button id="btn-studio-dl-single" class="studio-dl-btn single">⬇ DOWNLOAD SELECTED .GLB</button>
+          <button id="btn-studio-dl-all" class="studio-dl-btn all">📦 DOWNLOAD ALL 7 (.GLB)</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LEVEL COMPLETE / TIME'S UP MODAL (COSMIC POP 3D) -->
   <div id="modal-overlay" class="modal-overlay hidden">
     <div class="glass-modal">
       <div id="modal-badge" class="modal-badge">STAGE CLEARED</div>
@@ -109,7 +447,7 @@
     </div>
   </div>
 
-  <!-- LEVEL SELECT MODAL (Accessible from Settings & Stage Complete) -->
+  <!-- LEVEL SELECT MODAL (COSMIC POP 3D) -->
   <div id="level-modal" class="modal-overlay hidden">
     <div class="glass-modal wide-modal">
       <div class="modal-header-row">
@@ -134,6 +472,12 @@
       </div>
 
       <div class="settings-list">
+        <!-- Quick Game Switcher Button inside Settings -->
+        <button class="btn-switch-games-banner js-open-game-hub">
+          <span>🎮 OPEN MULTI-GAME 3D ARCADE HUB</span>
+          <span>SWIPE ▶</span>
+        </button>
+
         <!-- Graphics Quality Selector (Low Default, Medium, High, Ultra) -->
         <div class="setting-item-col">
           <div class="setting-label-row">
@@ -148,7 +492,7 @@
           </div>
         </div>
 
-        <!-- Stage Navigation Controls moved from top bar into Settings -->
+        <!-- Stage Navigation Controls -->
         <div class="setting-item">
           <span>Current Stage</span>
           <div class="stage-nav-group">
@@ -221,6 +565,11 @@
     </div>
   </div>
 
+  <!-- Separate Modular Game & Studio Scripts -->
   <script src="game.js"></script>
+  <script src="capy-pairs.js"></script>
+  <script src="cannon-models.js"></script>
+  <script src="cannon-knockdown.js"></script>
+  <script src="asset-studio.js"></script>
 </body>
 </html>

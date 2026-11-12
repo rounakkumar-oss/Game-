@@ -2366,6 +2366,16 @@
     gl.depthMask(true);
   }
 
+  window.CosmicPop3DController = {
+    pause: function () {
+      isPaused = true;
+    },
+    resume: function () {
+      isPaused = false;
+      lastFrameTime = performance.now();
+    }
+  };
+
   // Restore saved offline progress & settings (defaults to Low Graphics and Level 3)
   loadLocalState();
   applyGraphicsQuality(currentGfxKey, false);
