@@ -1,0 +1,6 @@
+{
+  "name": "Cosmic Pop 3D",
+  "description": "A hyper-casual 3D cosmic sphere-cluster puzzle shooter with AI-generated 3D clusters, atmospheric palettes, chain-reaction physics, and minimalist glassmorphic UI.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Cosmic Pop 3D</string>
+    <string name="ai_architect_title">AI Cosmic Architect</string>
+    <string name="ai_architect_subtitle">Create custom 3D sphere clusters, physics &amp; cosmic backgrounds with Gemini AI</string>
+    <string name="ai_prompt_hint">Describe a 3D shape, cosmic theme &amp; colors…</string>
+    <string name="ai_generate_cluster_btn">Generate 3D Model &amp; Palette</string>
+    <string name="ai_generate_bg_btn">Synthesize AI Nebula Backdrop</string>
+    <string name="ai_apply_to_game">Launch AI Cosmic Level</string>
+    <string name="ai_status_generating">Gemini AI is sculpting 3D cluster geometry &amp; palette…</string>
+    <string name="ai_status_generating_bg">Synthesizing cosmic background art (30–60s)…</string>
+    <string name="close_Sheet">Close</string>
+    <string name="ai_fab_label">AI Studio</string>
+</resources>

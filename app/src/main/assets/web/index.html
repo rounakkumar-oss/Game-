@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Cosmic Pop 3D</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="gfx-low">
+  <!-- Dynamic Radial Cosmic Background & Optional AI Nebula Layer -->
+  <div id="cosmic-bg" class="cosmic-bg"></div>
+  <div id="ai-bg-overlay" class="ai-bg-overlay"></div>
+
+  <!-- 3D WebGL Viewport -->
+  <canvas id="game-canvas"></canvas>
+
+  <!-- Minimalist Cosmic HUD -->
+  <div id="hud" class="hud">
+    <!-- 1. Top Header (Level Indicator at the very top of the screen) -->
+    <div class="header-row">
+      <button id="btn-pause" class="glass-circle-btn pause-btn" aria-label="Pause and Settings" title="Pause & Settings">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+          <rect x="6" y="5" width="4" height="14" rx="1.5"></rect>
+          <rect x="14" y="5" width="4" height="14" rx="1.5"></rect>
+        </svg>
+      </button>
+
+      <div class="header-center">
+        <div id="level-pill" class="level-pill">LEVEL 3 • Violet Pyramid</div>
+
+        <div class="progress-row">
+          <div class="progress-track">
+            <div id="progress-fill" class="progress-fill"></div>
+          </div>
+          <span id="progress-pct" class="progress-pct">100%</span>
+        </div>
+
+        <div id="time-pill" class="time-pill">TIME 1:05</div>
+
+        <!-- Subtle AI status indicator when AI Architect is explicitly triggered -->
+        <div id="ai-live-pill" class="ai-live-pill hidden">
+          <span class="ai-sparkle">✦</span>
+          <span id="ai-live-text">AI Sculpting 3D Cluster…</span>
+        </div>
+      </div>
+
+      <div class="shots-badge" aria-label="Shots Fired">
+        <span id="shots-count" class="shots-number">0</span>
+        <span class="shots-label">SHOTS</span>
+      </div>
+    </div>
+
+    <!-- 2. Combo & Feedback Popup (Upper-Center) -->
+    <div id="combo-container" class="combo-container">
+      <div id="combo-title" class="combo-title">COSMIC!</div>
+      <div id="combo-sub" class="combo-sub">30 SPHERES</div>
+    </div>
+
+    <!-- Subtle Gesture Hint -->
+    <div id="gesture-hint" class="gesture-hint">
+      Drag on cluster to AIM • Swipe edges to ORBIT 360°
+    </div>
+
+    <!-- 3. Bottom Controls -->
+    <div class="bottom-bar">
+      <!-- Bottom-left Pill Color Swapper -->
+      <button id="btn-swap-color" class="swap-widget" aria-label="Swap Active and Next Sphere Color">
+        <div class="swap-current-wrap">
+          <div id="preview-current" class="sphere-preview current-sphere"></div>
+        </div>
+        <div class="swap-arrows">⇄</div>
+        <div class="swap-next-wrap">
+          <span class="next-label">NEXT</span>
+          <div id="preview-next" class="sphere-preview next-sphere"></div>
+        </div>
+      </button>
+    </div>
+  </div>
+
+  <!-- LEVEL COMPLETE / TIME'S UP MODAL -->
+  <div id="modal-overlay" class="modal-overlay hidden">
+    <div class="glass-modal">
+      <div id="modal-badge" class="modal-badge">STAGE CLEARED</div>
+      <h2 id="modal-title" class="modal-title">COSMIC CLEAR!</h2>
+      <p id="modal-subtitle" class="modal-subtitle">All spheres shattered in stellar harmony.</p>
+
+      <div id="modal-stats" class="modal-stats">
+        <div class="stat-box">
+          <span class="stat-val" id="stat-time">0:42</span>
+          <span class="stat-lbl">TIME LEFT</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-val" id="stat-shots">12</span>
+          <span class="stat-lbl">SHOTS</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-val" id="stat-max-combo">28</span>
+          <span class="stat-lbl">BEST CHAIN</span>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button id="btn-modal-primary" class="btn-primary-glow">NEXT LEVEL</button>
+        <div class="modal-secondary-row">
+          <button id="btn-modal-retry" class="btn-glass-secondary">RETRY</button>
+          <button id="btn-modal-levels" class="btn-glass-secondary">STAGES</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LEVEL SELECT MODAL (Accessible from Settings & Stage Complete) -->
+  <div id="level-modal" class="modal-overlay hidden">
+    <div class="glass-modal wide-modal">
+      <div class="modal-header-row">
+        <h2 class="modal-title-sm">SELECT COSMIC STAGE</h2>
+        <button id="btn-close-levels" class="glass-circle-btn sm-btn">✕</button>
+      </div>
+      <p class="modal-subtitle-sm">Saved progress is stored offline on your device</p>
+      <div id="level-grid" class="level-grid"></div>
+      <div class="modal-secondary-row">
+        <button id="btn-back-to-settings" class="btn-glass-secondary">← SETTINGS</button>
+        <button id="btn-open-ai-from-levels" class="btn-primary-glow">✦ AI 3D STUDIO</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- UNIFIED PAUSE & SETTINGS MODAL -->
+  <div id="settings-modal" class="modal-overlay hidden">
+    <div class="glass-modal wide-modal">
+      <div class="modal-header-row">
+        <h2 class="modal-title-sm">SETTINGS &amp; PAUSE</h2>
+        <button id="btn-close-settings" class="glass-circle-btn sm-btn">✕</button>
+      </div>
+
+      <div class="settings-list">
+        <!-- Graphics Quality Selector (Low Default, Medium, High, Ultra) -->
+        <div class="setting-item-col">
+          <div class="setting-label-row">
+            <span>Graphics Quality</span>
+            <span id="gfx-quality-badge" class="gfx-badge">LOW (FAST)</span>
+          </div>
+          <div class="gfx-selector" role="group" aria-label="Graphics Quality">
+            <button data-gfx="low" class="gfx-btn active">Low</button>
+            <button data-gfx="medium" class="gfx-btn">Medium</button>
+            <button data-gfx="high" class="gfx-btn">High</button>
+            <button data-gfx="ultra" class="gfx-btn">Ultra</button>
+          </div>
+        </div>
+
+        <!-- Stage Navigation Controls moved from top bar into Settings -->
+        <div class="setting-item">
+          <span>Current Stage</span>
+          <div class="stage-nav-group">
+            <button id="btn-prev-level" class="mini-nav-btn" aria-label="Previous Level">◀ Prev</button>
+            <button id="btn-level-select" class="mini-nav-btn accent" aria-label="All Stages">All Stages</button>
+            <button id="btn-next-level" class="mini-nav-btn" aria-label="Next Level">Next ▶</button>
+          </div>
+        </div>
+
+        <div class="setting-item">
+          <span>Synthesized 3D Audio</span>
+          <button id="toggle-audio" class="pill-toggle active">ON</button>
+        </div>
+        <div class="setting-item">
+          <span>Tactile Haptic Feedback</span>
+          <button id="toggle-haptics" class="pill-toggle active">ON</button>
+        </div>
+        <div class="setting-item">
+          <span>Auto-Rotate Cluster Idle</span>
+          <button id="toggle-autorotate" class="pill-toggle active">ON</button>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button id="btn-open-github-apk" class="btn-github-apk full-w">⬇ GITHUB DIRECT APK DOWNLOAD</button>
+        <div class="modal-secondary-row">
+          <button id="btn-settings-restart" class="btn-glass-secondary">RESTART STAGE</button>
+          <button id="btn-ai-studio" class="btn-glass-secondary">✦ AI 3D STUDIO</button>
+        </div>
+        <button id="btn-settings-resume" class="btn-primary-glow full-w">RESUME GAME</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- GITHUB DIRECT APK DOWNLOAD & ACTIONS MODAL -->
+  <div id="github-modal" class="modal-overlay hidden">
+    <div class="glass-modal wide-modal">
+      <div class="modal-header-row">
+        <h2 class="modal-title-sm">GITHUB APK DOWNLOAD</h2>
+        <button id="btn-close-github" class="glass-circle-btn sm-btn">✕</button>
+      </div>
+      <p class="modal-subtitle-sm">
+        GitHub Actions (<code>.github/workflows/build-apk.yml</code>) automatically builds &amp; publishes <b>Cosmic-Pop-3D.apk</b> on every push.
+      </p>
+
+      <div class="github-box">
+        <label class="github-input-label" for="github-repo-input">GITHUB REPOSITORY (username/repo)</label>
+        <input
+          id="github-repo-input"
+          class="github-repo-input"
+          type="text"
+          placeholder="rounakkumar-oss/Game-"
+          value="rounakkumar-oss/Game-"
+          autocomplete="off"
+          spellcheck="false"
+        />
+        <div id="github-url-preview" class="github-url-preview">
+          https://github.com/rounakkumar-oss/Game-/raw/main/Cosmic-Pop-3D.apk
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button id="btn-dl-release-apk" class="btn-primary-glow full-w">⬇ DIRECT DOWNLOAD APK (100%)</button>
+        <div class="modal-secondary-row">
+          <button id="btn-open-gh-actions" class="btn-glass-secondary">⚙ OPEN ACTIONS TAB</button>
+          <button id="btn-copy-apk-link" class="btn-glass-secondary">📋 COPY APK LINK</button>
+        </div>
+        <button id="btn-back-from-github" class="btn-glass-secondary full-w">← BACK TO SETTINGS</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
